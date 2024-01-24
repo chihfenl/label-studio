@@ -7,19 +7,43 @@ import re
 from urllib.parse import urlparse
 
 import boto3
-from botocore.exceptions import ClientError
+from botocore.exceptions import ClientError, NoCredentialsError
 from core.utils.params import get_env
 from django.conf import settings
 
 logger = logging.getLogger(__name__)
 
 
+def get_sagemaker_execution_role_credentials():
+    """Retrieve SageMaker execution role credentials from the current session."""
+    try:
+        # Get the current session's credentials
+        credentials = boto3.Session().get_credentials().get_frozen_credentials()
+
+        # Extract the relevant credential information
+        return {
+            'AccessKeyId': credentials.access_key,
+            'SecretAccessKey': credentials.secret_key,
+            'SessionToken': credentials.token
+        }
+    except NoCredentialsError as e:
+        logger.warning(f"Error getting SageMaker execution role credentials: {e}")
+        return None
+
 def get_client_and_resource(
     aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, region_name=None, s3_endpoint=None
 ):
-    aws_access_key_id = aws_access_key_id or get_env('AWS_ACCESS_KEY_ID')
-    aws_secret_access_key = aws_secret_access_key or get_env('AWS_SECRET_ACCESS_KEY')
-    aws_session_token = aws_session_token or get_env('AWS_SESSION_TOKEN')
+    sagemaker_credentials = get_sagemaker_execution_role_credentials()
+    if sagemaker_credentials:
+        credentials = get_sagemaker_execution_role_credentials()
+        aws_access_key_id = sagemaker_credentials['AccessKeyId']
+        aws_secret_access_key = sagemaker_credentials['SecretAccessKey']
+        aws_session_token = sagemaker_credentials['SessionToken']
+    else:    
+        aws_access_key_id = aws_access_key_id or get_env('AWS_ACCESS_KEY_ID')
+        aws_secret_access_key = aws_secret_access_key or get_env('AWS_SECRET_ACCESS_KEY')
+        aws_session_token = aws_session_token or get_env('AWS_SESSION_TOKEN')
+    
     logger.debug(
         f'Create boto3 session with '
         f'access key id={aws_access_key_id}, '

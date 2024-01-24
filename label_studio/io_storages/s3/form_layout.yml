@@ -24,24 +24,21 @@ aws_params_import: &aws_params_import
   - type: password
     name: aws_access_key_id
     label: Access Key ID
-    autoComplete: "off"
     skipAutofill: true
-    allowEmpty: false
-    protectedValue: true
+    allowEmpty: true
+    protectedValue: false
   - type: password
     name: aws_secret_access_key
     label: Secret Access Key
-    autoComplete: "new-password"
     skipAutofill: true
-    allowEmpty: false
-    protectedValue: true
+    allowEmpty: true
+    protectedValue: false
   - type: password
     name: aws_session_token
-    autoComplete: "new-password"
     label: Session Token
     skipAutofill: true
     allowEmpty: true
-    protectedValue: true
+    protectedValue: false
 
 # 2x3 grid
 aws_params_export: &aws_params_export
@@ -58,24 +55,21 @@ aws_params_export: &aws_params_export
   - type: password
     name: aws_access_key_id
     label: Access Key ID
-    autoComplete: "off"
     skipAutofill: true
-    allowEmpty: false
-    protectedValue: true
+    allowEmpty: true
+    protectedValue: false
   - type: password
     name: aws_secret_access_key
     label: Secret Access Key
-    autoComplete: "new-password"
     skipAutofill: true
-    allowEmpty: false
-    protectedValue: true
+    allowEmpty: true
+    protectedValue: false
   - type: password
     name: aws_session_token
-    autoComplete: "new-password"
     label: Session Token
     skipAutofill: true
     allowEmpty: true
-    protectedValue: true
+    protectedValue: false
 
 
 ImportStorage:
