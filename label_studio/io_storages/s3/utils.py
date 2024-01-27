@@ -30,16 +30,9 @@ def get_sagemaker_execution_role_credentials():
 def get_client_and_resource(
     aws_access_key_id=None, aws_secret_access_key=None, aws_session_token=None, region_name=None, s3_endpoint=None
 ):
-    sagemaker_credentials = get_sagemaker_execution_role_credentials()
-    if sagemaker_credentials:
-        credentials = get_sagemaker_execution_role_credentials()
-        aws_access_key_id = sagemaker_credentials['AccessKeyId']
-        aws_secret_access_key = sagemaker_credentials['SecretAccessKey']
-        aws_session_token = sagemaker_credentials['SessionToken']
-    else:    
-        aws_access_key_id = aws_access_key_id or get_env('AWS_ACCESS_KEY_ID')
-        aws_secret_access_key = aws_secret_access_key or get_env('AWS_SECRET_ACCESS_KEY')
-        aws_session_token = aws_session_token or get_env('AWS_SESSION_TOKEN')
+    aws_access_key_id = aws_access_key_id or get_env('AWS_ACCESS_KEY_ID')
+    aws_secret_access_key = aws_secret_access_key or get_env('AWS_SECRET_ACCESS_KEY')
+    aws_session_token = aws_session_token or get_env('AWS_SESSION_TOKEN')
 
     logger.debug(
         f'Create boto3 session with '

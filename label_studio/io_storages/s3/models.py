@@ -19,7 +19,7 @@ from io_storages.base_models import (
     ImportStorageLink,
     ProjectStorageMixin,
 )
-from io_storages.s3.utils import get_client_and_resource, resolve_s3_url
+from io_storages.s3.utils import get_client_and_resource, resolve_s3_url, get_sagemaker_execution_role_credentials
 from tasks.models import Annotation
 from tasks.validation import ValidationError as TaskValidationError
 
@@ -53,6 +53,13 @@ class S3StorageMixin(models.Model):
     s3_endpoint = models.TextField(_('s3_endpoint'), null=True, blank=True, help_text='S3 Endpoint')
 
     def get_client_and_resource(self):
+        
+        sagemaker_credentials = get_sagemaker_execution_role_credentials()
+        if sagemaker_credentials:
+            self.aws_access_key_id = sagemaker_credentials['AccessKeyId']
+            self.aws_secret_access_key = sagemaker_credentials['SecretAccessKey']
+            self.aws_session_token = sagemaker_credentials['SessionToken']
+        
         # s3 client initialization ~ 100 ms, for 30 tasks it's a 3 seconds, so we need to cache it
         cache_key = f'{self.aws_access_key_id}:{self.aws_secret_access_key}:{self.aws_session_token}:{self.region_name}:{self.s3_endpoint}'
         if cache_key in clients_cache:
